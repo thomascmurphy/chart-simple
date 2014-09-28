@@ -54,6 +54,7 @@
             background_color = options.background_color || '#fff',
             full_donut = options.full_donut,
             title = options.title,
+            no_text = options.no_text || false,
             goal_value = options.goal_value,
             rounded = options.rounded || false,
             start_angle,
@@ -182,7 +183,6 @@
                 start_x = end_x_outer;
                 start_y = end_y_outer;
                 start_angle = (start_angle - arc_length) > 0 ?  (start_angle - arc_length) % (2*PI) : start_angle - arc_length + 2*PI;
-                console.log(start_angle);
 
                 key_data.push({'color': color, 'title': data_item.name, 'percentage': Math.round(100*(data_item.value / data_total))});
             }
@@ -233,12 +233,14 @@ if(!full_donut){
         svg.append(donut_hole);
 */
 
-        if(!full_donut){
-            var center_large = makeSVG('text', {x: outer_radius, y: outer_radius + inner_radius*3/4 + donut_thickness/2, 'text-anchor': 'middle', class:'center_large'}, prettyNumber(data_total_display));
-            var center_small = makeSVG('text', {x: outer_radius, y: outer_radius * 2 - donut_thickness/2, fill: secondary_text_color, 'text-anchor': 'middle', class:'center_small'}, title);
-        } else {
-            var center_large = makeSVG('text', {x: outer_radius, y: outer_radius, 'text-anchor': 'middle', class:'center_large'}, prettyNumber(data_total_display));
-            var center_small = makeSVG('text', {x: outer_radius, y: outer_radius + inner_radius/4, fill: secondary_text_color, 'text-anchor': 'middle', class:'center_small'}, title);
+        if(!no_text){
+            if(!full_donut){
+                var center_large = makeSVG('text', {x: outer_radius, y: outer_radius + inner_radius*3/4 + donut_thickness/2, 'text-anchor': 'middle', class:'center_large'}, prettyNumber(data_total_display));
+                var center_small = makeSVG('text', {x: outer_radius, y: outer_radius * 2 - donut_thickness/2, fill: secondary_text_color, 'text-anchor': 'middle', class:'center_small'}, title);
+            } else {
+                var center_large = makeSVG('text', {x: outer_radius, y: outer_radius, 'text-anchor': 'middle', class:'center_large'}, prettyNumber(data_total_display));
+                var center_small = makeSVG('text', {x: outer_radius, y: outer_radius + inner_radius/4, fill: secondary_text_color, 'text-anchor': 'middle', class:'center_small'}, title);
+            }
         }
 
 
