@@ -90,7 +90,11 @@
             data.push({name: 'Remaining', value: goal_value - data_total});
             data_total = goal_value;
         } else if(data.length==1 && full_donut){
-            data_total += data_total * 0.01;
+            if(rounded){
+                data_total += data_total * 0.01;
+            } else {
+                data_total += data_total * 0.001;
+            }
         }
 
 
