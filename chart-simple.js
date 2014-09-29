@@ -57,6 +57,7 @@
             no_text = options.no_text || false,
             goal_value = options.goal_value,
             rounded = options.rounded || false,
+            no_tip = options.no_tip || false,
             start_angle,
             cos = Math.cos,
             sin = Math.sin,
@@ -267,21 +268,24 @@ if(!full_donut){
             }
         }
 
-        var tip = $('<div class="chart_tip"><span class="title"></span><span class="value"></span></div>').appendTo('body');
 
-        element.on('mouseover', 'path.graph_piece', function(e){
-            tip.find('span.title').text($(this).data('title'));
-            tip.find('span.value').text(prettyNumber($(this).data('value')));
-            tip.show();
-        });
+        if(!no_tip){
+            var tip = $('<div class="chart_tip"><span class="title"></span><span class="value"></span></div>').appendTo('body');
 
-        element.on('mouseleave', 'path.graph_piece', function(e){
-           tip.hide();
-        });
+            element.on('mouseover', 'path.graph_piece', function(e){
+                tip.find('span.title').text($(this).data('title'));
+                tip.find('span.value').text(prettyNumber($(this).data('value')));
+                tip.show();
+            });
 
-        element.on('mousemove', 'path.graph_piece', function(e){
-            tip.css({'left': e.pageX - tip.outerWidth()/2 + 'px', 'top': e.pageY - tip.outerHeight(true) + 'px'});
-        });
+            element.on('mouseleave', 'path.graph_piece', function(e){
+               tip.hide();
+            });
+
+            element.on('mousemove', 'path.graph_piece', function(e){
+                tip.css({'left': e.pageX - tip.outerWidth()/2 + 'px', 'top': e.pageY - tip.outerHeight(true) + 'px'});
+            });
+        }
 
         element.addClass('chart').addClass('donut_chart');
         if(has_key){
