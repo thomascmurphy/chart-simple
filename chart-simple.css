@@ -21,6 +21,10 @@ div.chart.bar_chart{
         cursor: pointer;
     }
 
+    .no_tip path.graph_piece:hover{
+        cursor: auto;
+    }
+
     text.center_large{
         font-size: 1.25em;
         font-weight: bold;
