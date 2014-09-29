@@ -93,7 +93,7 @@
             if(rounded){
                 data_total += data_total * 0.01;
             } else {
-                data_total += data_total * 0.001;
+                data_total += data_total * 0.005;
             }
         }
 
