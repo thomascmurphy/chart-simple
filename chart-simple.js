@@ -88,7 +88,11 @@
         var data_total_display = data_total;
         if(goal_value && goal_value > data_total){
             data.push({name: 'Remaining', value: goal_value - data_total});
-            data_total = goal_value;
+            if(data_total > 0 ){
+                data_total = goal_value;
+            } else {
+                data_total = goal_value + goal_value * 0.005;
+            }
         } else if(data.length==1 && full_donut){
             if(rounded){
                 data_total += data_total * 0.01;
