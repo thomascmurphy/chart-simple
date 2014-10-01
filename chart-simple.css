@@ -25,6 +25,10 @@ div.chart.bar_chart{
         cursor: auto;
     }
 
+    .full_opacity path.graph_piece:hover{
+        opacity: 1;
+    }
+
     text.center_large{
         font-size: 1.25em;
         font-weight: bold;
@@ -58,6 +62,7 @@ div.chart.bar_chart{
         text-align: center;
         margin-bottom: 1em;
         pointer-events: none;
+        z-index: 999;
     }
 
     div.chart_tip:after{

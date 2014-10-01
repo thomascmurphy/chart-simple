@@ -87,19 +87,16 @@
         }
 
         var data_total_display = data_total;
+        var one_piece = false;
+
         if(goal_value && goal_value > data_total){
             data.push({name: 'Remaining', value: goal_value - data_total});
-            if(data_total > 0 ){
-                data_total = goal_value;
-            } else {
-                data_total = goal_value + goal_value * 0.005;
+            if(data_total == 0 ){
+                one_piece = true;
             }
+            data_total = goal_value;
         } else if(data.length==1 && full_donut){
-            if(rounded){
-                data_total += data_total * 0.01;
-            } else {
-                data_total += data_total * 0.005;
-            }
+            one_piece = true;
         }
 
 
@@ -127,67 +124,80 @@
                 var final_sweep = i==0 && !full_donut ? '0 0 1' : '0 0 0';
 
                 var piece_attrs;
+                var path_type = 'path';
 
-                if(rounded){
+                if(one_piece && data_item.value > 0){
 
-                    piece_attrs = [
-                        'M',
-                        start_x,
-                        start_y,
-                        'A',
-                        outer_radius,
-                        outer_radius,
-                        arc_outer_sweep,
-                        end_x_outer,
-                        end_y_outer,
-                        'A',
-                        donut_thickness/2,
-                        donut_thickness/2,
-                        '0 1 1',
-                        end_x_inner,
-                        end_y_inner,
-                        'A',
-                        inner_radius,
-                        inner_radius,
-                        arc_inner_sweep,
-                        outer_radius + inner_radius * (cos(start_angle)),
-                        outer_radius - inner_radius * (sin(start_angle)),
-                        'A',
-                        donut_thickness/2,
-                        donut_thickness/2,
-                        final_sweep,
-                        start_x,
-                        start_y,
-                        'Z'
-                    ];
+                    var piece_path = makeSVG('circle', {"cx": outer_radius, "cy": outer_radius, "r": inner_radius, "stroke": color, "stroke-width": donut_thickness, "fill": "none", "data-title": data_item.name, "data-value": data_item.value, class: "graph_piece"});
+
                 } else {
-                    piece_attrs = [
-                        'M',
-                        start_x,
-                        start_y,
-                        'A',
-                        outer_radius,
-                        outer_radius,
-                        arc_outer_sweep,
-                        end_x_outer,
-                        end_y_outer,
-                        'L',
-                        end_x_inner,
-                        end_y_inner,
-                        'A',
-                        inner_radius,
-                        inner_radius,
-                        arc_inner_sweep,
-                        outer_radius + inner_radius * (cos(start_angle)),
-                        outer_radius - inner_radius * (sin(start_angle)),
-                        'L',
-                        start_x,
-                        start_y,
-                        'Z'
-                    ];
+
+                    if(rounded){
+
+                        piece_attrs = [
+                            'M',
+                            start_x,
+                            start_y,
+                            'A',
+                            outer_radius,
+                            outer_radius,
+                            arc_outer_sweep,
+                            end_x_outer,
+                            end_y_outer,
+                            'A',
+                            donut_thickness/2,
+                            donut_thickness/2,
+                            '0 1 1',
+                            end_x_inner,
+                            end_y_inner,
+                            'A',
+                            inner_radius,
+                            inner_radius,
+                            arc_inner_sweep,
+                            outer_radius + inner_radius * (cos(start_angle)),
+                            outer_radius - inner_radius * (sin(start_angle)),
+                            'A',
+                            donut_thickness/2,
+                            donut_thickness/2,
+                            final_sweep,
+                            start_x,
+                            start_y,
+                            'Z'
+                        ];
+                    } else {
+                        piece_attrs = [
+                            'M',
+                            start_x,
+                            start_y,
+                            'A',
+                            outer_radius,
+                            outer_radius,
+                            arc_outer_sweep,
+                            end_x_outer,
+                            end_y_outer,
+                            'L',
+                            end_x_inner,
+                            end_y_inner,
+                            'A',
+                            inner_radius,
+                            inner_radius,
+                            arc_inner_sweep,
+                            outer_radius + inner_radius * (cos(start_angle)),
+                            outer_radius - inner_radius * (sin(start_angle)),
+                            'L',
+                            start_x,
+                            start_y,
+                            'Z'
+                        ];
+                    }
+
+                    var piece_path = makeSVG('path', {d: piece_attrs.join(' '), fill: color, "data-title": data_item.name, "data-value": data_item.value, class: "graph_piece"});
+
                 }
 
-                var piece_path = makeSVG('path', {d: piece_attrs.join(' '), fill: color, "data-title": data_item.name, "data-value": data_item.value, class: "graph_piece"});
+
+
+
                 svg.append(piece_path);
                 start_x = end_x_outer;
                 start_y = end_y_outer;
