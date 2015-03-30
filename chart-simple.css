@@ -2,6 +2,11 @@ div.chart{
     position: relative;
 }
 
+    div.chart svg{
+        position: relative;
+        z-index: 50;
+    }
+
 div.chart.donut_chart, div.chart.pie_chart{
     max-width: 300px;
     margin: 0px auto;
@@ -16,16 +21,16 @@ div.chart.bar_chart{
     margin: 0px auto;
 }
 
-    path.graph_piece:hover{
+    path.graph_piece:hover, circle.graph_piece:hover{
         opacity: 0.5;
         cursor: pointer;
     }
 
-    .no_tip path.graph_piece:hover{
+    .no_tip path.graph_piece:hover, .no_tip circle.graph_piece:hover{
         cursor: auto;
     }
 
-    .full_opacity path.graph_piece:hover{
+    .full_opacity path.graph_piece:hover, .full_opacity circle.graph_piece:hover{
         opacity: 1;
     }
 
@@ -62,7 +67,7 @@ div.chart.bar_chart{
         text-align: center;
         margin-bottom: 1em;
         pointer-events: none;
-        z-index: 999;
+        z-index: 1999;
     }
 
     div.chart_tip:after{

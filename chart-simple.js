@@ -2,12 +2,18 @@
     var secondary_text_color = '#999';
     var indicator_color = '#6bb8b6';
 
+    function convertEntities(html) {
+        var el = document.createElement("div");
+        el.innerHTML = html;
+        return el.firstChild.data;
+    }
+
     function makeSVG(tag, attrs, text_content) {
         var el= document.createElementNS('http://www.w3.org/2000/svg', tag);
         for (var k in attrs)
             el.setAttribute(k, attrs[k]);
         if(text_content){
-            el.textContent = text_content;
+            el.textContent = convertEntities(text_content);
         }
         return el;
     }
@@ -128,7 +134,7 @@
 
                 if(one_piece && data_item.value > 0){
 
-                    var piece_path = makeSVG('circle', {"cx": outer_radius, "cy": outer_radius, "r": inner_radius, "stroke": color, "stroke-width": donut_thickness, "fill": "none", "data-title": data_item.name, "data-value": data_item.value, class: "graph_piece"});
+                    var piece_path = makeSVG('circle', {"cx": outer_radius, "cy": outer_radius, "r": inner_radius + donut_thickness/2, "stroke": color, "stroke-width": donut_thickness, "fill": "none", "data-title": data_item.name, "data-value": data_item.value, class: "graph_piece"});
 
                 } else {
 
@@ -282,17 +288,17 @@ if(!full_donut){
         if(!no_tip){
             var tip = $('<div class="chart_tip"><span class="title"></span><span class="value"></span></div>').appendTo('body');
 
-            element.on('mouseover', 'path.graph_piece', function(e){
-                tip.find('span.title').text($(this).data('title'));
+            element.on('mouseover', 'path.graph_piece, circle.graph_piece', function(e){
+                tip.find('span.title').html($(this).data('title'));
                 tip.find('span.value').text(prettyNumber($(this).data('value')));
                 tip.show();
             });
 
-            element.on('mouseleave', 'path.graph_piece', function(e){
+            element.on('mouseleave', 'path.graph_piece, circle.graph_piece', function(e){
                tip.hide();
             });
 
-            element.on('mousemove', 'path.graph_piece', function(e){
+            element.on('mousemove', 'path.graph_piece, circle.graph_piece', function(e){
                 tip.css({'left': e.pageX - tip.outerWidth()/2 + 'px', 'top': e.pageY - tip.outerHeight(true) + 'px'});
             });
         }
@@ -331,6 +337,7 @@ if(!full_donut){
 
         var svg = $('<svg width="100%" height="100%" viewBox="0, 0, ' + width +', '+ height +'" xmlns="http://www.w3.org/2000/svg"></svg>').appendTo(element);
 
+        var one_piece = false;
         var pieces = [];
         var key_data = [];
         var data_total = 0;
@@ -339,6 +346,9 @@ if(!full_donut){
         var start_angle = PI * 3/2;
         for(var i=0; i<data.length; i++){
             data_total += data[i].value;
+        }
+        if(data.length==1){
+            one_piece = true;
         }
 
         if(data_total > 0){
@@ -350,6 +360,12 @@ if(!full_donut){
                 color = colors[i%colors.length],
                 arc_outer_sweep,
                 arc_inner_sweep;
+
+                if(data_item.value == data_total){
+                    one_piece = true;
+                } else {
+                    one_piece = false;
+                }
 
                 if(start_angle > (PI/2) && start_angle <= (3*PI/2)){
                     if(arc_length >= PI){
@@ -369,27 +385,40 @@ if(!full_donut){
                     }
                 }
 
+                if(data_item.value > 0){
 
-                var piece_attrs = [
-                    'M',
-                    outer_radius,
-                    outer_radius,
-                    'L',
-                    start_x,
-                    start_y,
-                    'A',
-                    outer_radius,
-                    outer_radius,
-                    arc_outer_sweep,
-                    end_x_outer,
-                    end_y_outer,
-                    'L',
-                    outer_radius,
-                    outer_radius,
-                    'Z'
-                ];
+                    if(one_piece){
 
-                var piece_path = makeSVG('path', {d: piece_attrs.join(' '), fill: color, "data-title": data_item.name, "data-value": data_item.value, class: "graph_piece"});
+                        var piece_path = makeSVG('circle', {"cx": outer_radius, "cy": outer_radius, "r": outer_radius, "fill": color, "data-title": data_item.name, "data-value": data_item.value, class: "graph_piece"});
+
+                    } else {
+
+                        var piece_attrs = [
+                            'M',
+                            outer_radius,
+                            outer_radius,
+                            'L',
+                            start_x,
+                            start_y,
+                            'A',
+                            outer_radius,
+                            outer_radius,
+                            arc_outer_sweep,
+                            end_x_outer,
+                            end_y_outer,
+                            'L',
+                            outer_radius,
+                            outer_radius,
+                            'Z'
+                        ];
+
+
+                        var piece_path = makeSVG('path', {d: piece_attrs.join(' '), fill: color, "data-title": data_item.name, "data-value": data_item.value, class: "graph_piece"});
+
+                    }
+                }
+
+
                 svg.append(piece_path);
                 start_x = end_x_outer;
                 start_y = end_y_outer;
@@ -413,17 +442,17 @@ if(!full_donut){
 
         var tip = $('<div class="chart_tip"><span class="title"></span><span class="value"></span></div>').appendTo('body');
 
-        element.on('mouseover', 'path.graph_piece', function(e){
-            tip.find('span.title').text($(this).data('title'));
+        element.on('mouseover', 'path.graph_piece, circle.graph_piece', function(e){
+            tip.find('span.title').html($(this).data('title'));
             tip.find('span.value').text(prettyNumber($(this).data('value')));
             tip.show();
         });
 
-        element.on('mouseleave', 'path.graph_piece', function(e){
+        element.on('mouseleave', 'path.graph_piece, circle.graph_piece', function(e){
            tip.hide();
         });
 
-        element.on('mousemove', 'path.graph_piece', function(e){
+        element.on('mousemove', 'path.graph_piece, circle.graph_piece', function(e){
             tip.css({'left': e.pageX - tip.outerWidth()/2 + 'px', 'top': e.pageY - tip.outerHeight(true) + 'px'});
         });
 
@@ -458,39 +487,40 @@ if(!full_donut){
             average_line = options.average_line,
             goal_value = typeof options.goal_value === 'undefined' ? null : options.goal_value,
             color_switch,
+            height_adjustment = typeof options.height_adjustment === 'undefined' ? 0 : options.height_adjustment,
             cos = Math.cos,
             sin = Math.sin,
             PI = Math.PI;
 
         var svg = $('<svg width="100%" height="100%" viewBox="0, 0, ' + width +', '+ height +'" xmlns="http://www.w3.org/2000/svg"></svg>').appendTo(element);
 
-        var indicator_width = average_line || goal_value ? 16 : 0;
-        var indicator_height = average_line || goal_value ? 8 : 0;
+        var indicator_width = average_line || goal_value !== null ? 16 : 0;
+        var indicator_height = average_line || goal_value !== null ? 8 : 0;
         var area_width = width - indicator_width;
         var area_height = hover && !title ? height : height - 10;
         var max_bar_height = area_height - 10;
         var pieces = [];
         var data_total = 0;
-        var data_max = 1;
+        var data_max = 1 + height_adjustment;
         var start_x = width - area_width + bar_spacing/2;
         var start_y = area_height;
         var bar_width = (area_width - ((data.length) * bar_spacing)) / data.length;
         for(var i=0; i<data.length; i++){
             data_total += data[i].value;
-            if(data[i].value > data_max){
-                data_max = data[i].value;
+            if(data[i].value + height_adjustment > data_max){
+                data_max = data[i].value + height_adjustment;
             }
         }
 
-        if(average_line || goal_value){
+        if(average_line || goal_value !== null){
             var indicated_height;
             if(average_line){
                 color_switch = data_total / data.length;
-                indicated_height = max_bar_height * color_switch / data_max;
+                indicated_height = max_bar_height * (color_switch + height_adjustment) / data_max;
 
             } else {
                 color_switch = goal_value;
-                indicated_height = max_bar_height * goal_value / data_max;
+                indicated_height = max_bar_height * (goal_value + height_adjustment) / data_max;
             }
 
             var value_indicator = makeSVG('rect', {x: width - area_width, y: start_y - indicated_height, width: area_width, height: indicated_height, fill: 'rgba(0, 0, 0, 0.1)'});
@@ -521,12 +551,12 @@ if(!full_donut){
         }
 
 
-        if(color_switch){
+        if(typeof color_switch !== 'undefined'){
 
             for(var i=0; i<data.length; i++){
                 var data_item = data[i],
-                lower_bar_height = max_bar_height * Math.min(data_item.value, color_switch) / data_max,
-                bar_height = max_bar_height * data_item.value / data_max,
+                lower_bar_height = max_bar_height * Math.min((data_item.value + height_adjustment), (color_switch + height_adjustment)) / data_max,
+                bar_height = max_bar_height * (data_item.value + height_adjustment) / data_max,
                 lower_color = colors[0],
                 upper_color = colors[colors.length - 1],
                 bar_class = hover ? "graph_piece" : "";
@@ -595,7 +625,7 @@ if(!full_donut){
 
             for(var i=0; i<data.length; i++){
                 var data_item = data[i],
-                bar_height = max_bar_height * data_item.value / data_max,
+                bar_height = max_bar_height * (data_item.value + height_adjustment) / data_max,
                 color = colors[i%colors.length],
                 bar_class = hover ? "graph_piece" : "";
 
@@ -606,13 +636,13 @@ if(!full_donut){
                         start_y,
                         'L',
                         start_x,
-                        start_y - bar_height + bar_width/2,
+                        start_y - bar_height + Math.min(bar_width/2, bar_height),
                         'A',
                         bar_width/2,
-                        bar_width/2,
+                        Math.min(bar_width/2, bar_height),
                         '0 0 1',
                         start_x + bar_width,
-                        start_y - bar_height + bar_width/2,
+                        start_y - bar_height + Math.min(bar_width/2, bar_height),
                         'L',
                         start_x + bar_width,
                         start_y,
@@ -637,7 +667,10 @@ if(!full_donut){
                 }
 
                 var piece_path = makeSVG('path', {d: piece_attrs.join(' '), fill: color, "data-title": data_item.name, "data-value": data_item.value, class: bar_class});
-                svg.append(piece_path);
+
+                if(bar_height > 0){
+                    svg.append(piece_path);
+                }
 
 
                 if(!hover){
@@ -668,7 +701,7 @@ if(!full_donut){
             var tip = $('<div class="chart_tip"><span class="title"></span><span class="value"></span></div>').appendTo('body');
 
             element.on('mouseover', 'path.graph_piece', function(e){
-                tip.find('span.title').text($(this).data('title'));
+                tip.find('span.title').html($(this).data('title'));
                 tip.find('span.value').text(prettyNumber($(this).data('value')));
                 tip.show();
             });
@@ -708,7 +741,8 @@ if(!full_donut){
 
         var svg = $('<svg width="100%" height="100%" viewBox="0, 0, ' + width +', '+ height +'" xmlns="http://www.w3.org/2000/svg"></svg>').appendTo(element);
 
-        var data_total=0;
+        var data_total=0,
+        display_total = 0;
         for(var i=0; i<data.length; i++){
             data_total += data[i].value;
         }
@@ -725,10 +759,17 @@ if(!full_donut){
                 color = colors[i%colors.length],
                 shape = shapes[i%shapes.length],
                 percentage = Math.round(data_item.value/data_total * 100) / 100,
-                piece_width = Math.round(percentage * width * 100) / 100,
-                piece_height = Math.round(percentage * height * 100) / 100;
+                piece_percentage = (data_item.value/data_total) * (area_height / 100),
+                piece_width = Math.round(piece_percentage * width * 100) / 100,
+                piece_height = Math.round(piece_percentage * height * 100) / 100;
 
-                var piece_path = makeSVG('path', {d: shape, fill: color, "data-title": data_item.name, "data-value": Math.round(percentage * 100) + '%', class: piece_class, transform: 'translate('+ start_x +', '+ (start_y - piece_height) +'), scale('+ percentage + ')'});
+                display_total += percentage;
+                if(display_total > 1){
+                    percentage -= 0.01;
+                }
+
+
+                var piece_path = makeSVG('path', {d: shape, fill: color, "data-title": data_item.name, "data-value": Math.round(percentage * 100) + '%', class: piece_class, transform: 'translate('+ start_x +', '+ (start_y - piece_height) +'), scale('+ piece_percentage + ')'});
                 svg.append(piece_path);
 
 
@@ -742,6 +783,10 @@ if(!full_donut){
                 }
 
                 start_x += piece_width;
+
+                if(title){
+                    start_x += (10 / (data.length - 1));
+                }
             }
         }
 
@@ -757,7 +802,7 @@ if(!full_donut){
             var tip = $('<div class="chart_tip"><span class="title"></span><span class="value"></span></div>').appendTo('body');
 
             element.on('mouseover', 'path.graph_piece', function(e){
-                tip.find('span.title').text($(this).data('title'));
+                tip.find('span.title').html($(this).data('title'));
                 tip.find('span.value').text($(this).data('value'));
                 tip.show();
             });
