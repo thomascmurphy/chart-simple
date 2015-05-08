@@ -1,94 +1,94 @@
 div.chart{
-    position: relative;
+  position: relative;
 }
 
-    div.chart svg{
-        position: relative;
-        z-index: 50;
-    }
+  div.chart svg{
+    position: relative;
+    z-index: 50;
+  }
 
 div.chart.donut_chart, div.chart.pie_chart{
-    max-width: 300px;
-    margin: 0px auto;
+  max-width: 300px;
+  margin: 0px auto;
 }
 
 div.chart.donut_chart.has_key, div.chart.pie_chart.has_key{
-    max-width: 600px;
+  max-width: 600px;
 }
 
 div.chart.bar_chart{
-    max-width: 600px;
-    margin: 0px auto;
+  max-width: 600px;
+  margin: 0px auto;
 }
 
-    path.graph_piece:hover, circle.graph_piece:hover{
-        opacity: 0.5;
-        cursor: pointer;
+  path.graph_piece:hover, circle.graph_piece:hover{
+    opacity: 0.5;
+    cursor: pointer;
+  }
+
+  .no_tip path.graph_piece:hover, .no_tip circle.graph_piece:hover{
+    cursor: auto;
+  }
+
+  .full_opacity path.graph_piece:hover, .full_opacity circle.graph_piece:hover{
+    opacity: 1;
+  }
+
+  text.center_large{
+    font-size: 1.25em;
+    font-weight: bold;
+  }
+
+  text.center_small{
+    font-size: 0.5em;
+  }
+
+  text.key_text{
+    font-size: 0.35em;
+  }
+
+  text.key_text.large{
+    font-size: 0.5em;
+  }
+
+  text.goal_indicator_text{
+    font-size: 0.35em;
+  }
+
+  div.chart_tip{
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border-radius: 5px;
+    padding: 5px 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    text-align: center;
+    margin-bottom: 1em;
+    pointer-events: none;
+    z-index: 1999;
+  }
+
+  div.chart_tip:after{
+    content:" ";
+    width: 0;
+  	height: 0;
+  	border-left: 1em solid transparent;
+  	border-right: 1em solid transparent;
+  	border-top: 1em solid rgba(0, 0, 0, 0.5);
+  	position: absolute;
+  	top: 100%;
+  	left: 50%;
+  	margin-left: -1em;
+  }
+
+    .chart_tip .title{
+      font-weight: bold;
+      font-size: 1.2em;
+      display: block;
     }
 
-    .no_tip path.graph_piece:hover, .no_tip circle.graph_piece:hover{
-        cursor: auto;
+    .chart_tip .value{
+      display: block;
     }
-
-    .full_opacity path.graph_piece:hover, .full_opacity circle.graph_piece:hover{
-        opacity: 1;
-    }
-
-    text.center_large{
-        font-size: 1.25em;
-        font-weight: bold;
-    }
-
-    text.center_small{
-        font-size: 0.5em;
-    }
-
-    text.key_text{
-        font-size: 0.35em;
-    }
-
-    text.key_text.large{
-        font-size: 0.5em;
-    }
-
-    text.goal_indicator_text{
-        font-size: 0.35em;
-    }
-
-    div.chart_tip{
-        background-color: rgba(0, 0, 0, 0.5);
-        color: #fff;
-        border-radius: 5px;
-        padding: 5px 10px;
-        position: absolute;
-        top: 0;
-        left: 0;
-        display: none;
-        text-align: center;
-        margin-bottom: 1em;
-        pointer-events: none;
-        z-index: 1999;
-    }
-
-    div.chart_tip:after{
-        content:" ";
-        width: 0;
-    	height: 0;
-    	border-left: 1em solid transparent;
-    	border-right: 1em solid transparent;
-    	border-top: 1em solid rgba(0, 0, 0, 0.5);
-    	position: absolute;
-    	top: 100%;
-    	left: 50%;
-    	margin-left: -1em;
-    }
-
-        .chart_tip .title{
-            font-weight: bold;
-            font-size: 1.2em;
-            display: block;
-        }
-
-        .chart_tip .value{
-            display: block;
-        }
