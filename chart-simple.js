@@ -1216,6 +1216,158 @@ if(!full_donut){
 
 
 
+
+
+
+
+
+  $.fn.drawLine = function(data, options){
+    var element = $(this),
+        //width = options.width.indexOf('%') > -1 ? (element.width() * parseInt(options.width) / 100) : parseInt(options.width),
+        //height = options.height.indexOf('%') > -1 ? (element.height() * parseInt(options.height) / 100) : parseInt(options.height),
+        aspect_ratio = options.aspect_ratio ? options.aspect_ratio : 2,
+        width = 100 * aspect_ratio,
+        height = 100,
+        colors = options.colors,
+        background_color = options.background_color || '#fff',
+        title = options.title,
+        hover = options.hover,
+        dot_radius = 1.5,
+        height_adjustment = typeof options.height_adjustment === 'undefined' ? 0 : options.height_adjustment,
+        cos = Math.cos,
+        sin = Math.sin,
+        PI = Math.PI;
+
+    var svg = $('<svg width="100%" height="100%" viewBox="0, 0, ' + width +', '+ height +'" xmlns="http://www.w3.org/2000/svg"></svg>').appendTo(element);
+
+    var area_width = width - 2 * dot_radius;
+    var area_height = hover && !title ? height : height - 10;
+    var max_point_height = area_height - 10;
+    var data_max = 1 + height_adjustment;
+
+    for(var j=0; j<data.length; j++) {
+      for(var i=0; i<data[j].length; i++){
+        if(data[j][i].value + height_adjustment > data_max){
+          data_max = data[j][i].value + height_adjustment;
+        }
+      }
+    }
+
+    for(var j=0; j<data.length; j++) {
+      var point_spacing = data[j].length > 1 ? area_width / (data[j].length - 1) : area_width,
+          start_x = (width - area_width)/2,
+          start_y = area_height,
+          coords = [],
+          dots = [],
+          color = colors[j];
+
+      for(var i=0; i<data[j].length; i++){
+        var data_item = data[j][i],
+            coord_x = start_x,
+            coord_y = area_height - max_point_height * (data_item.value + height_adjustment) / data_max,
+            tooltip_value = data_item.value;
+
+        if (data_item.hasOwnProperty('tooltip_value')) {
+          if (data_item.tooltip_value.constructor == Array) {
+            tooltip_value = data_item.tooltip_value.join(', ');
+          } else {
+            tooltip_value = data_item.tooltip_value;
+          }
+        }
+
+        coords.push(coord_x + ',' + coord_y);
+
+        var dot_path = makeSVG('circle',
+                               {
+                                 cx: coord_x,
+                                 cy: coord_y,
+                                 r: dot_radius,
+                                 fill: color,
+                                 "data-title": data_item.name,
+                                 "data-value": tooltip_value,
+                                 class: "graph_piece"
+                               });
+
+        dots.push(dot_path);
+
+
+        start_x += point_spacing;
+      }
+
+      var fill_start_coord = dot_radius + ',' + area_height;
+      var fill_end_coord = dot_radius + area_width + ',' + area_height;
+
+      var line_path = makeSVG('polygon',
+                               {
+                                 points: fill_start_coord + ' ' + coords.join(' ') + ' ' + fill_end_coord,
+                                 fill: color,
+                                 "fill-opacity": 0.5
+                               });
+
+      var fill_path = makeSVG('polyline',
+                              {
+                                points: coords.join(' '),
+                                fill: "none",
+                                "fill-opacity": 0.5,
+                                "stroke": color,
+                                "stroke-width": "0.5%"
+                              });
+      svg.append(fill_path);
+      svg.append(line_path);
+      for (k=0; k<dots.length; k++){
+        svg.append(dots[k]);
+      }
+    }
+
+
+    if(hover && title){
+      var graph_title = makeSVG('text',
+                                {
+                                  x: width/2,
+                                  y: height - 2,
+                                  fill: secondary_text_color,
+                                  'text-anchor': 'middle',
+                                  class:'key_text'
+                                }, title);
+    }
+
+
+
+
+    svg.append(graph_title);
+
+    if(hover){
+
+      var tip = $('<div class="chart_tip"><span class="title"></span><span class="value"></span></div>').appendTo('body');
+
+      element.on('mouseover', 'polygon.graph_piece, circle.graph_piece', function(e){
+        tip.find('span.title').html($(this).data('title'));
+        tip.find('span.value').text($(this).data('value'));
+        tip.show();
+      });
+
+      element.on('mouseleave', 'polygon.graph_piece, circle.graph_piece', function(e){
+        tip.hide();
+      });
+
+      element.on('mousemove', 'polygon.graph_piece, circle.graph_piece', function(e){
+        tip.css({'left': e.pageX - tip.outerWidth()/2 + 'px', 'top': e.pageY - tip.outerHeight(true) + 'px'});
+      });
+
+    }
+
+    element.addClass('chart').addClass('bar_chart');
+
+    return element;
+  };
+
+
+
+
+
+
+
+
   $.fn.drawComparison = function(data, options){
     var element = $(this),
         aspect_ratio = options.aspect_ratio ? options.aspect_ratio : 1,
