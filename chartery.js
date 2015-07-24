@@ -418,7 +418,7 @@ if(!full_donut){
         var data_item = data[i],
         arc_length = (data_item.value / data_total) * total_radians,
         end_x_outer = outer_radius + outer_radius * (cos(start_angle - arc_length)),
-        end_y_outer = outer_radius - outer_radius * (sin(start_angle - arc_length)),
+        end_y_outer = offset_top + outer_radius - outer_radius * (sin(start_angle - arc_length)),
         color = colors[i%colors.length],
         arc_outer_sweep,
         arc_inner_sweep;
