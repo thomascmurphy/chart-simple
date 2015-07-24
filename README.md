@@ -8,7 +8,7 @@ Here are a few fiddles to make it quick and easy to see and play with the variou
 
 * Line Chart: <http://jsfiddle.net/3fhtezzy/>
 
-* Single Skew Chart: <http://jsfiddle.net/x6o8oc4j/>
+* Single Skew Chart: <http://jsfiddle.net/x6o8oc4j/2/>
 
 * Comparison Skew Chart: <>
 
