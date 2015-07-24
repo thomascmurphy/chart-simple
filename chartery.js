@@ -647,7 +647,6 @@ if(!full_donut){
           var category_name = data_item.category.name;
           var category_subtitle = data_item.category.subtitle;
         }
-        var category_name = data_item.category;
         if(category_name in category_pieces) {
           category_pieces[category_name]['length'] += 1;
         }
@@ -664,17 +663,17 @@ if(!full_donut){
 
     if(categories && category_pieces) {
       var category_start_angle = start_angle + PI/data_points,
-          category_start_x = outer_radius + outer_radius * (cos(category_start_angle));
-          category_start_y = outer_radius - outer_radius * (sin(category_start_angle));
+          category_start_x = start_x + outer_radius * (cos(category_start_angle));
+          category_start_y = start_y - outer_radius * (sin(category_start_angle));
 
       for(var category_name in category_pieces) {
         if(category_pieces.hasOwnProperty(category_name)) {
           var category = category_pieces[category_name],
           arc_length = (category.length / data_points) * total_radians,
-          end_x_outer = outer_radius + outer_radius * (cos(category_start_angle - arc_length)),
-          end_y_outer = outer_radius - outer_radius * (sin(category_start_angle - arc_length)),
-          end_x_inner = outer_radius + inner_radius * (cos(category_start_angle - arc_length)),
-          end_y_inner = outer_radius - inner_radius * (sin(category_start_angle - arc_length)),
+          end_x_outer = start_x + outer_radius * (cos(category_start_angle - arc_length)),
+          end_y_outer = start_y - outer_radius * (sin(category_start_angle - arc_length)),
+          end_x_inner = start_x + inner_radius * (cos(category_start_angle - arc_length)),
+          end_y_inner = start_y - inner_radius * (sin(category_start_angle - arc_length)),
           color = category.color,
           arc_outer_sweep,
           arc_inner_sweep;
@@ -694,8 +693,8 @@ if(!full_donut){
 
             var piece_path = makeSVG('circle',
                                      {
-                                       cx: outer_radius,
-                                       cy: outer_radius,
+                                       cx: start_x,
+                                       cy: start_y,
                                        r: inner_radius + dot_radius,
                                        stroke: color,
                                        "stroke-width": dot_radius*2,
@@ -724,8 +723,8 @@ if(!full_donut){
               inner_radius,
               inner_radius,
               arc_inner_sweep,
-              outer_radius + inner_radius * (cos(category_start_angle)),
-              outer_radius - inner_radius * (sin(category_start_angle)),
+              start_x + inner_radius * (cos(category_start_angle)),
+              start_y - inner_radius * (sin(category_start_angle)),
               'L',
               category_start_x,
               category_start_y,
