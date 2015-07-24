@@ -14,7 +14,7 @@ Here are a few fiddles to make it quick and easy to see and play with the variou
 
 * Bar Graph (with a goal value): <http://jsfiddle.net/3ptd9cy1/1/>
 
-* Donut (with key): <http://jsfiddle.net/s8k6t9L8/1/>
+* Donut (with key): <http://jsfiddle.net/dr64u4yf/4/>
 
 * Donut Meter: <http://jsfiddle.net/9r1cd7cs/2/>
 
