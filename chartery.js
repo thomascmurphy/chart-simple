@@ -389,7 +389,7 @@ if(!full_donut){
         colors = options.colors,
         center_x = width/2,
         center_y = height/2,
-        outer_radius = Math.min(center_x, center_y),
+        outer_radius = Math.min(center_x, center_y - offset_top),
         title = options.title,
         offset_top = title ? 10 : 0,
         has_key = options.has_key,
@@ -404,7 +404,7 @@ if(!full_donut){
     var key_data = [];
     var data_total = 0;
     var start_x = outer_radius;
-    var start_y = outer_radius + outer_radius;
+    var start_y = offset_top + outer_radius + outer_radius;
     var start_angle = PI * 3/2;
     for(var i=0; i<data.length; i++){
       data_total += data[i].value;
