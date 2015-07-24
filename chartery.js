@@ -454,7 +454,7 @@ if(!full_donut){
               var piece_path = makeSVG('circle',
                                        {
                                          cx: outer_radius,
-                                         cy: outer_radius,
+                                         cy: outer_radius + offset_top,
                                          r: outer_radius,
                                          fill: color,
                                          "data-title": data_item.name,
