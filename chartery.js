@@ -639,12 +639,20 @@ if(!full_donut){
       }
 
       if(categories){
+        if (typeof(data_item.category) == "string") {
+          var category_name = data_item.category;
+          var category_subtitle = "";
+        }
+        else if (typeof(data_item.category) == "object"){
+          var category_name = data_item.category.name;
+          var category_subtitle = data_ite.category.subtitle;
+        }
         var category_name = data_item.category;
         if(category_name in category_pieces) {
           category_pieces[category_name]['length'] += 1;
         }
         else {
-          category_pieces[category_name] = {'length': 1, 'color': categories_colors[category_counter%categories_colors.length], 'value': 'test'};
+          category_pieces[category_name] = {'length': 1, 'color': categories_colors[category_counter%categories_colors.length], 'value': category_subtitle};
           category_counter++;
         }
       }
