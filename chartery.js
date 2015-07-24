@@ -467,7 +467,7 @@ if(!full_donut){
               var piece_attrs = [
                 'M',
                 outer_radius,
-                outer_radius,
+                outer_radius + offset_top,
                 'L',
                 start_x,
                 start_y,
@@ -479,7 +479,7 @@ if(!full_donut){
                 end_y_outer,
                 'L',
                 outer_radius,
-                outer_radius,
+                outer_radius + offset_top,
                 'Z'
               ];
               var piece_path = makeSVG('path',
