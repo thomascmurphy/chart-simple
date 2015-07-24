@@ -645,7 +645,7 @@ if(!full_donut){
         }
         else if (typeof(data_item.category) == "object"){
           var category_name = data_item.category.name;
-          var category_subtitle = data_ite.category.subtitle;
+          var category_subtitle = data_item.category.subtitle;
         }
         var category_name = data_item.category;
         if(category_name in category_pieces) {
