@@ -10,7 +10,13 @@ Here are a few fiddles to make it quick and easy to see and play with the variou
 
 * Single Skew Chart: <http://jsfiddle.net/x6o8oc4j/2/>
 
-* Comparison Skew Chart: <>
+* Comparison Skew Chart: <http://jsfiddle.net/hnec3ng5/1/>
+
+* Bar Graph (with a goal value): <http://jsfiddle.net/3ptd9cy1/1/>
+
+* Donut: <http://jsfiddle.net/9r1cd7cs/2/>
+
+* Donut Meter: <http://jsfiddle.net/9r1cd7cs/2/>
 
 ## Background
 

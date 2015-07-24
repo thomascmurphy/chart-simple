@@ -321,14 +321,14 @@ if(!full_donut){
     svg.append(center_small);
 
     if(has_key){
-      var key_line_height = (height - offset_top) / key_data.length;
+      var key_line_height = height / key_data.length;
       var key_circle_radius = Math.min(5, key_line_height);
       for(var i=0; i<key_data.length; i++){
         var key_data_item = key_data[i];
         var key_circle = makeSVG('circle',
                                  {
                                    cx: center_x + 2*key_circle_radius,
-                                   cy: offset_top + (i*key_line_height) + key_circle_radius,
+                                   cy: (i*key_line_height) + key_circle_radius,
                                    r: key_circle_radius,
                                    fill: key_data_item['color'],
                                    class: 'key_circle'
@@ -336,7 +336,7 @@ if(!full_donut){
         var key_text = makeSVG('text',
                                {
                                  x: center_x + 4*key_circle_radius,
-                                 y: offset_top + i*key_line_height + 1.5*key_circle_radius,
+                                 y: i*key_line_height + 1.5*key_circle_radius,
                                  fill: secondary_text_color,
                                  class: 'key_text'
                                },
@@ -508,14 +508,14 @@ if(!full_donut){
     }
 
     if(has_key){
-      var key_line_height = (height - offset_top) / key_data.length;
+      var key_line_height = height / key_data.length;
       var key_circle_radius = Math.min(5, key_line_height);
       for(var i=0; i<key_data.length; i++){
         var key_data_item = key_data[i];
         var key_circle = makeSVG('circle',
                                  {
                                    cx: center_x + 2*key_circle_radius,
-                                   cy: offset_top + (i*key_line_height) + key_circle_radius,
+                                   cy: (i*key_line_height) + key_circle_radius,
                                    r: key_circle_radius,
                                    fill: key_data_item['color'],
                                    class: 'key_circle'
@@ -523,7 +523,7 @@ if(!full_donut){
         var key_text = makeSVG('text',
                                {
                                  x: center_x + 4*key_circle_radius,
-                                 y: offset_top + i*key_line_height + 1.5*key_circle_radius,
+                                 y: i*key_line_height + 1.5*key_circle_radius,
                                  fill: secondary_text_color,
                                  class: 'key_text'
                                },
