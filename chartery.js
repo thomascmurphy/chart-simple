@@ -60,8 +60,10 @@
         background_color = options.background_color || '#fff',
         full_donut = options.full_donut,
         title = options.title,
+        number_decorator = options.number_decorator || "",
         no_text = options.no_text || false,
         goal_value = options.goal_value,
+        goal_value_text = options.goal_value_text || "Remaining",
         rounded = options.rounded || false,
         no_tip = options.no_tip || false,
         start_angle,
@@ -95,7 +97,7 @@
     var one_piece = false;
 
     if(goal_value && goal_value > data_total){
-      data.push({name: 'Remaining', value: goal_value - data_total});
+      data.push({name: goal_value_text, value: goal_value - data_total});
       if(data_total == 0 ){
         one_piece = true;
       }
@@ -285,7 +287,7 @@ if(!full_donut){
                                      'text-anchor': 'middle',
                                      class:'center_large'
                                    },
-                                   prettyNumber(data_total_display));
+                                   prettyNumber(data_total_display) + number_decorator);
         var center_small = makeSVG('text',
                                    {
                                      x: outer_radius,
@@ -303,7 +305,7 @@ if(!full_donut){
                                      'text-anchor': 'middle',
                                      class:'center_large'
                                    },
-                                   prettyNumber(data_total_display));
+                                   prettyNumber(data_total_display) + number_decorator);
         var center_small = makeSVG('text',
                                    {
                                      x: outer_radius,
@@ -352,7 +354,7 @@ if(!full_donut){
 
       element.on('mouseover', 'path.graph_piece, circle.graph_piece', function(e){
         tip.find('span.title').html($(this).data('title'));
-        tip.find('span.value').text(prettyNumber($(this).data('value')));
+        tip.find('span.value').text(prettyNumber($(this).data('value')) + number_decorator);
         tip.show();
       });
 
@@ -1264,22 +1266,29 @@ if(!full_donut){
     var area_width = width - 2 * dot_radius;
     var area_height = hover && !title ? height : height - 10;
     var max_point_height = area_height - 10;
-    var data_max = 1 + height_adjustment;
+    var data_max = 1;
+    var data_min = 0;
 
     for(var j=0; j<data.length; j++) {
       for(var i=0; i<data[j].length; i++){
-        if(data[j][i].value + height_adjustment > data_max){
-          data_max = data[j][i].value + height_adjustment;
+        if(data[j][i].value  > data_max){
+          data_max = data[j][i].value;
+        }
+        if(data[j][i].value < data_min){
+          data_min = data[j][i].value;
         }
       }
     }
+    height_adjustment = Math.max((-1*data_min), height_adjustment);
+    data_max = data_max + height_adjustment;
+    data_min = data_min + height_adjustment;
+    var dots = [];
 
     for(var j=0; j<data.length; j++) {
       var point_spacing = data[j].length > 1 ? area_width / (data[j].length - 1) : area_width,
           start_x = (width - area_width)/2,
           start_y = area_height,
           coords = [],
-          dots = [],
           color = colors[j];
 
       for(var i=0; i<data[j].length; i++){
@@ -1335,9 +1344,9 @@ if(!full_donut){
                               });
       svg.append(fill_path);
       svg.append(line_path);
-      for (k=0; k<dots.length; k++){
-        svg.append(dots[k]);
-      }
+    }
+    for (k=0; k<dots.length; k++){
+      svg.append(dots[k]);
     }
 
 
@@ -1348,7 +1357,7 @@ if(!full_donut){
                                   y: height - 2,
                                   fill: secondary_text_color,
                                   'text-anchor': 'middle',
-                                  class:'key_text'
+                                  class:'key_text large'
                                 }, title);
     }
 
