@@ -133,7 +133,7 @@
         var piece_attrs;
         var path_type = 'path';
 
-        if(one_piece && data_item.value > 0){
+        if(one_piece && full_donut && data_item.value > 0){
 
           var piece_path = makeSVG('circle',
                                    {
