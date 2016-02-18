@@ -1256,6 +1256,7 @@ if(!full_donut){
         title = options.title,
         hover = options.hover,
         dot_radius = 1.5,
+        separate_scales = options.separate_scales ? options.separate_scales : false,
         height_adjustment = typeof options.height_adjustment === 'undefined' ? 0 : options.height_adjustment,
         cos = Math.cos,
         sin = Math.sin,
@@ -1266,22 +1267,38 @@ if(!full_donut){
     var area_width = width - 2 * dot_radius;
     var area_height = hover && !title ? height : height - 10;
     var max_point_height = area_height - 10;
-    var data_max = 1;
-    var data_min = 0;
+    var data_max = null;
+    var data_min = null;
+    var data_maxes = [];
+    var data_mins = [];
 
     for(var j=0; j<data.length; j++) {
+      data_maxes.push(null);
+      data_mins.push(null);
       for(var i=0; i<data[j].length; i++){
-        if(data[j][i].value  > data_max){
+        if(data_max == null || data[j][i].value > data_max){
           data_max = data[j][i].value;
         }
-        if(data[j][i].value < data_min){
+        if(data_min == null || data[j][i].value < data_min){
           data_min = data[j][i].value;
+        }
+
+        if(data_maxes[j] == null || data[j][i].value > data_maxes[j]){
+          data_maxes[j] = data[j][i].value;
+        }
+        if(data_mins[j] == null || data[j][i].value < data_mins[j]){
+          data_mins[j] = data[j][i].value;
         }
       }
     }
     height_adjustment = Math.max((-1*data_min), height_adjustment);
     data_max = data_max + height_adjustment;
     data_min = data_min + height_adjustment;
+    for(var j=0; j<data.length; j++) {
+      height_adjustment = Math.max((-1*data_mins[j]), height_adjustment);
+      data_maxes[j] = data_maxes[j] + height_adjustment;
+      data_mins[j] = data_mins[j] + height_adjustment;
+    }
     var dots = [];
 
     for(var j=0; j<data.length; j++) {
@@ -1289,12 +1306,13 @@ if(!full_donut){
           start_x = (width - area_width)/2,
           start_y = area_height,
           coords = [],
-          color = colors[j];
+          color = colors[j],
+          line_data_max = separate_scales ? data_maxes[j] : data_max;
 
       for(var i=0; i<data[j].length; i++){
         var data_item = data[j][i],
             coord_x = start_x,
-            coord_y = area_height - max_point_height * (data_item.value + height_adjustment) / data_max,
+            coord_y = area_height - max_point_height * (data_item.value + height_adjustment) / line_data_max,
             tooltip_value = data_item.value;
 
         if (data_item.hasOwnProperty('tooltip_value')) {
