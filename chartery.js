@@ -1252,12 +1252,14 @@ if(!full_donut){
         width = 100 * aspect_ratio,
         height = 100,
         colors = options.colors,
+        show_area_color = typeof options.show_area_color === 'undefined' ? true : options.show_area_color
         background_color = options.background_color || '#fff',
         title = options.title,
         hover = options.hover,
         dot_radius = 1.5,
-        separate_scales = options.separate_scales ? options.separate_scales : false,
-        height_adjustment = typeof options.height_adjustment === 'undefined' ? 0 : options.height_adjustment,
+        separate_scales = typeof options.separate_scales === 'undefined' ? false : options.separate_scales,
+        zoom_y = typeof options.zoom_y === 'undefined' ? 0 : options.zoom_y,
+        height_adjustment = typeof options.height_adjustment === 'undefined' ? 1 : options.height_adjustment,
         cos = Math.cos,
         sin = Math.sin,
         PI = Math.PI;
@@ -1294,8 +1296,9 @@ if(!full_donut){
     height_adjustment = Math.max((-1*data_min), height_adjustment);
     data_max = data_max + height_adjustment;
     data_min = data_min + height_adjustment;
+    var height_adjustments = [];
     for(var j=0; j<data.length; j++) {
-      height_adjustment = Math.max((-1*data_mins[j]), height_adjustment);
+      height_adjustments[j] = Math.max((-1*data_mins[j]), height_adjustment);
       data_maxes[j] = data_maxes[j] + height_adjustment;
       data_mins[j] = data_mins[j] + height_adjustment;
     }
@@ -1307,12 +1310,14 @@ if(!full_donut){
           start_y = area_height,
           coords = [],
           color = colors[j],
-          line_data_max = separate_scales ? data_maxes[j] : data_max;
+          line_data_max = separate_scales ? data_maxes[j] : data_max,
+          line_data_min = separate_scales ? data_mins[j] : data_min,
+          line_height_adjustment = separate_scales ? height_adjustments[j] : height_adjustment;
 
       for(var i=0; i<data[j].length; i++){
         var data_item = data[j][i],
             coord_x = start_x,
-            coord_y = area_height - max_point_height * (data_item.value + height_adjustment) / line_data_max,
+            coord_y = area_height - max_point_height * (data_item.value + line_height_adjustment - line_data_min * zoom_y) / (line_data_max - line_data_min * zoom_y),
             tooltip_value = data_item.value;
 
         if (data_item.hasOwnProperty('tooltip_value')) {
@@ -1342,16 +1347,6 @@ if(!full_donut){
         start_x += point_spacing;
       }
 
-      var fill_start_coord = dot_radius + ',' + area_height;
-      var fill_end_coord = dot_radius + area_width + ',' + area_height;
-
-      var line_path = makeSVG('polygon',
-                               {
-                                 points: fill_start_coord + ' ' + coords.join(' ') + ' ' + fill_end_coord,
-                                 fill: color,
-                                 "fill-opacity": 0.5
-                               });
-
       var fill_path = makeSVG('polyline',
                               {
                                 points: coords.join(' '),
@@ -1361,7 +1356,20 @@ if(!full_donut){
                                 "stroke-width": "0.5%"
                               });
       svg.append(fill_path);
-      svg.append(line_path);
+
+      if (show_area_color) {
+        var fill_start_coord = dot_radius + ',' + area_height;
+        var fill_end_coord = dot_radius + area_width + ',' + area_height;
+
+        var line_path = makeSVG('polygon',
+                                 {
+                                   points: fill_start_coord + ' ' + coords.join(' ') + ' ' + fill_end_coord,
+                                   fill: color,
+                                   "fill-opacity": 0.5
+                                 });
+        svg.append(line_path);
+      }
+
     }
     for (k=0; k<dots.length; k++){
       svg.append(dots[k]);
@@ -1404,7 +1412,7 @@ if(!full_donut){
 
     }
 
-    element.addClass('chart').addClass('bar_chart');
+    element.addClass('chart').addClass('line_chart');
 
     return element;
   };
