@@ -1309,7 +1309,7 @@ if(!full_donut){
           start_x = (width - area_width)/2,
           start_y = area_height,
           coords = [],
-          color = colors[j],
+          color = colors[j%colors.length],
           line_data_max = separate_scales ? data_maxes[j] : data_max,
           line_data_min = separate_scales ? data_mins[j] : data_min,
           line_height_adjustment = separate_scales ? height_adjustments[j] : height_adjustment;
