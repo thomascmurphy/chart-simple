@@ -596,7 +596,7 @@ if(!full_donut){
         edge_tooltips = options.edge_tooltips || false,
         categories = options.categories || false,
         categories_colors = options.categories_colors,
-        dot_radius = 1.5,
+        dot_radius = options.dot_radius || 1.5,
         offset_top = !title ? dot_radius*2 : 10,
         offset_bottom = !show_fit ? dot_radius*2 : 10;
         center_x = width/2,
@@ -632,27 +632,10 @@ if(!full_donut){
     var tooltip_pieces = [];
     var category_pieces = {};
 
-    var edge_angle = start_angle;
     var category_counter = 0;
     for(var j=0; j<data[0]['values'].length; j++) {
     	var data_item = data[0]['values'][j],
-    	coord_x = start_x + inner_radius * (cos(edge_angle)),
-      coord_y = start_y - inner_radius * (sin(edge_angle));
-
-      if(edge_tooltips) {
-      	var piece_path = makeSVG('circle',
-                                 {
-                                   cx: coord_x,
-                                   cy: coord_y,
-                                   r: dot_radius,
-                                   fill: border_color,
-                                   "data-title": data_item.name,
-                                   "data-value": tooltip_values[j].join('<br/>'),
-                                   class: "graph_piece"
-                                 });
-        svg.append(piece_path);
-        edge_angle += angle_step;
-      }
+      graph_name = data[0]['title'];
 
       if(categories){
         if (typeof(data_item.category) == "string") {
@@ -772,15 +755,24 @@ if(!full_donut){
         var data_item = data[i]['values'][j],
         coord_x = start_x + (inner_radius * data_item.value/data_max) * (cos(piece_angle)),
         coord_y = start_y - (inner_radius * data_item.value/data_max) * (sin(piece_angle)),
-        color = colors[i%colors.length];
+        color = colors[i%colors.length],
+        tooltip_value = graph_name + ": " + data_item.value + "/" + data_max;
+
+        if (data_item.hasOwnProperty('tooltip_value')) {
+          if (data_item.tooltip_value.constructor == Array) {
+            tooltip_value = data_item.tooltip_value.join(', ');
+          } else {
+            tooltip_value = data_item.tooltip_value;
+          }
+        };
 
         coords.push(coord_x + ',' + coord_y);
         piece_angle += angle_step;
         if(edge_tooltips) {
           if(tooltip_values[j]) {
-	          tooltip_values[j].push(graph_name + ": " + data_item.value + "/" + data_max);
+	          tooltip_values[j].push(tooltip_value);
 	        } else {
-		        tooltip_values[j] = [graph_name + ": " + data_item.value + "/" + data_max];
+		        tooltip_values[j] = [tooltip_value];
 	        }
         }
         else {
@@ -791,7 +783,7 @@ if(!full_donut){
                                              r: dot_radius,
                                              fill: color,
                                              "data-title": data_item.name,
-                                             "data-value": graph_name + ": " + data_item.value + "/" + data_max,
+                                             "data-value": tooltip_value,
                                              class: "graph_piece"
                                            });
 	        tooltip_pieces.push(tooltip_piece_path);
@@ -819,6 +811,29 @@ if(!full_donut){
       }
 
       key_data.push({'color': color, 'title': data[i]['title']});
+    }
+
+    if(edge_tooltips) {
+      var edge_angle = start_angle;
+      for(var j=0; j<data[0]['values'].length; j++) {
+      	var data_item = data[0]['values'][j],
+        graph_name = data[0]['title'],
+      	coord_x = start_x + inner_radius * (cos(edge_angle)),
+        coord_y = start_y - inner_radius * (sin(edge_angle));
+
+      	var piece_path = makeSVG('circle',
+                                 {
+                                   cx: coord_x,
+                                   cy: coord_y,
+                                   r: dot_radius,
+                                   fill: border_color,
+                                   "data-title": data_item.name,
+                                   "data-value": tooltip_values[j].join('<br/>'),
+                                   class: "graph_piece"
+                                 });
+        svg.append(piece_path);
+        edge_angle += angle_step;
+      }
     }
 
     if(has_key) {
@@ -1256,7 +1271,7 @@ if(!full_donut){
         background_color = options.background_color || '#fff',
         title = options.title,
         hover = options.hover,
-        dot_radius = 1.5,
+        dot_radius = options.dot_radius || 1.5,
         separate_scales = typeof options.separate_scales === 'undefined' ? false : options.separate_scales,
         zoom_y = typeof options.zoom_y === 'undefined' ? 0 : options.zoom_y,
         height_adjustment = typeof options.height_adjustment === 'undefined' ? 1 : options.height_adjustment,
