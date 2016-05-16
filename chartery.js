@@ -1266,6 +1266,7 @@ if(!full_donut){
         aspect_ratio = options.aspect_ratio ? options.aspect_ratio : 2,
         width = 100 * aspect_ratio,
         height = 100,
+        offset_top = 0,
         colors = options.colors,
         show_area_color = typeof options.show_area_color === 'undefined' ? true : options.show_area_color
         background_color = options.background_color || '#fff',
