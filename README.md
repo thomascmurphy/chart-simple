@@ -6,7 +6,7 @@ Chartery is a simple library for making interactive and scalable charts using si
 
 Here are a few fiddles to make it quick and easy to see and play with the various charts:
 
-* Line Chart: <http://jsfiddle.net/3fhtezzy/2/>
+* Line Chart: <http://jsfiddle.net/3fhtezzy/3/>
 
 * Single Skew Chart: <http://jsfiddle.net/x6o8oc4j/2/>
 
