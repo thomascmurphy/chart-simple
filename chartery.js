@@ -1275,36 +1275,39 @@ if(!full_donut){
         separate_scales = typeof options.separate_scales === 'undefined' ? false : options.separate_scales,
         zoom_y = typeof options.zoom_y === 'undefined' ? 0 : options.zoom_y,
         height_adjustment = typeof options.height_adjustment === 'undefined' ? 1 : options.height_adjustment,
+        has_key = options.has_key || false,
         cos = Math.cos,
         sin = Math.sin,
         PI = Math.PI;
 
     var svg = $('<svg width="100%" height="100%" viewBox="0, 0, ' + width +', '+ height +'" xmlns="http://www.w3.org/2000/svg"></svg>').appendTo(element);
 
-    var area_width = width - 2 * dot_radius;
+    var area_width = has_key ? width - 75 - 2 * dot_radius : width - 2 * dot_radius;
     var area_height = hover && !title ? height : height - 10;
     var max_point_height = area_height - 10;
     var data_max = null;
     var data_min = null;
     var data_maxes = [];
     var data_mins = [];
+    var key_data = [];
 
     for(var j=0; j<data.length; j++) {
       data_maxes.push(null);
       data_mins.push(null);
-      for(var i=0; i<data[j].length; i++){
-        if(data_max == null || data[j][i].value > data_max){
-          data_max = data[j][i].value;
+      var data_items = data[j].hasOwnProperty('values') ? data[j]['values'] : data[j];
+      for(var i=0; i<data_items.length; i++){
+        if(data_max == null || data_items[i].value > data_max){
+          data_max = data_items[i].value;
         }
-        if(data_min == null || data[j][i].value < data_min){
-          data_min = data[j][i].value;
+        if(data_min == null || data_items[i].value < data_min){
+          data_min = data_items[i].value;
         }
 
-        if(data_maxes[j] == null || data[j][i].value > data_maxes[j]){
-          data_maxes[j] = data[j][i].value;
+        if(data_maxes[j] == null || data_items[i].value > data_maxes[j]){
+          data_maxes[j] = data_items[i].value;
         }
-        if(data_mins[j] == null || data[j][i].value < data_mins[j]){
-          data_mins[j] = data[j][i].value;
+        if(data_mins[j] == null || data_items[i].value < data_mins[j]){
+          data_mins[j] = data_items[i].value;
         }
       }
     }
@@ -1320,8 +1323,9 @@ if(!full_donut){
     var dots = [];
 
     for(var j=0; j<data.length; j++) {
-      var point_spacing = data[j].length > 1 ? area_width / (data[j].length - 1) : area_width,
-          start_x = (width - area_width)/2,
+      var data_items = data[j].hasOwnProperty('values') ? data[j]['values'] : data[j],
+          point_spacing = data_items.length > 1 ? area_width / (data_items.length - 1) : area_width,
+          start_x = dot_radius,
           start_y = area_height,
           coords = [],
           color = colors[j%colors.length],
@@ -1329,8 +1333,8 @@ if(!full_donut){
           line_data_min = separate_scales ? data_mins[j] : data_min,
           line_height_adjustment = separate_scales ? height_adjustments[j] : height_adjustment;
 
-      for(var i=0; i<data[j].length; i++){
-        var data_item = data[j][i],
+      for(var i=0; i<data_items.length; i++){
+        var data_item = data_items[i],
             coord_x = start_x,
             coord_y = area_height - max_point_height * (data_item.value + line_height_adjustment - line_data_min * zoom_y) / (line_data_max - line_data_min * zoom_y),
             tooltip_value = data_item.value;
@@ -1384,12 +1388,38 @@ if(!full_donut){
                                  });
         svg.append(line_path);
       }
+      key_data.push({'color': color, 'title': data[j]['title'] || title});
 
     }
     for (k=0; k<dots.length; k++){
       svg.append(dots[k]);
     }
 
+    if(has_key) {
+      var key_line_height = (height - offset_top) / key_data.length;
+      var key_circle_radius = Math.min(5, key_line_height);
+      for(var i=0; i<key_data.length; i++) {
+        var key_data_item = key_data[i];
+        var key_circle = makeSVG('circle',
+                                 {
+                                   cx: area_width + 2*key_circle_radius,
+                                   cy: offset_top + (i*key_line_height) + key_circle_radius,
+                                   r: key_circle_radius,
+                                   fill: key_data_item['color'],
+                                   class: 'key_circle'
+                                 });
+        var key_text = makeSVG('text',
+                               {
+                                 x: area_width + 4*key_circle_radius,
+                                 y: offset_top + i*key_line_height + 1.5*key_circle_radius,
+                                 fill: secondary_text_color,
+                                 class: 'key_text'
+                               },
+                               key_data_item.title);
+        svg.append(key_circle);
+        svg.append(key_text);
+      }
+    }
 
     if(hover && title){
       var graph_title = makeSVG('text',
