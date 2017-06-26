@@ -323,7 +323,7 @@ if(!full_donut){
     svg.append(center_small);
 
     if(has_key){
-      var key_line_height = height / key_data.length;
+      var key_line_height = area_height / key_data.length;
       var key_circle_radius = Math.min(5, key_line_height);
       for(var i=0; i<key_data.length; i++){
         var key_data_item = key_data[i];
@@ -511,7 +511,7 @@ if(!full_donut){
     }
 
     if(has_key){
-      var key_line_height = (height - offset_top) / key_data.length;
+      var key_line_height = (area_height - offset_top) / key_data.length;
       var key_circle_radius = Math.min(5, key_line_height);
       for(var i=0; i<key_data.length; i++){
         var key_data_item = key_data[i];
@@ -751,8 +751,22 @@ if(!full_donut){
     	var coords = [];
     	var graph_name = data[i]['title'];
     	var piece_angle = start_angle;
-    	for(var j=0; j<data[i]['values'].length; j++) {
-        var data_item = data[i]['values'][j],
+      var data_values = data[i]['values'];
+      if (categories && category_pieces) {
+        var categories_ordered = Object.keys(category_pieces)
+        function compare_by_category(a,b) {
+          var a_category = typeof(a.category) == "object" ? a.category.name : a.category;
+          var b_category = typeof(b.category) == "object" ? b.category.name : b.category;
+          if (categories_ordered.indexOf(a_category) < categories_ordered.indexOf(b_category))
+            return -1;
+          if (categories_ordered.indexOf(a_category) > categories_ordered.indexOf(b_category))
+            return 1;
+          return 0;
+        }
+        data_values = data_values.sort(compare_by_category);
+      }
+    	for(var j=0; j<data_values.length; j++) {
+        var data_item = data_values[j],
         coord_x = start_x + (inner_radius * data_item.value/data_max) * (cos(piece_angle)),
         coord_y = start_y - (inner_radius * data_item.value/data_max) * (sin(piece_angle)),
         color = colors[i%colors.length],
@@ -767,7 +781,7 @@ if(!full_donut){
         };
 
         coords.push(coord_x + ',' + coord_y);
-        piece_angle += angle_step;
+        piece_angle -= angle_step;
         if(edge_tooltips) {
           if(tooltip_values[j]) {
 	          tooltip_values[j].push(tooltip_value);
@@ -837,7 +851,7 @@ if(!full_donut){
     }
 
     if(has_key) {
-      var key_line_height = (height - offset_top) / key_data.length;
+      var key_line_height = (area_height - offset_top) / key_data.length;
       var key_circle_radius = Math.min(5, key_line_height);
       for(var i=0; i<key_data.length; i++) {
         var key_data_item = key_data[i];
@@ -1397,8 +1411,10 @@ if(!full_donut){
     }
 
     if(has_key) {
-      var key_line_height = (height - offset_top) / key_data.length;
-      var key_circle_radius = Math.min(5, key_line_height);
+      var key_lines = Math.max(10, key_data.length);
+      var key_line_height = (area_height - offset_top) / key_lines;
+      var key_circle_radius = Math.min(3, key_line_height/2);
+      console.log(key_circle_radius, key_line_height);
       for(var i=0; i<key_data.length; i++) {
         var key_data_item = key_data[i];
         var key_circle = makeSVG('circle',
