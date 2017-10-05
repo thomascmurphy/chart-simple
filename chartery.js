@@ -401,7 +401,7 @@ if(!full_donut){
         total_radians = 2*PI;
 
     var svg = $('<svg width="100%" height="100%" viewBox="0, 0, ' + width +', '+ height +'" xmlns="http://www.w3.org/2000/svg"></svg>').appendTo(element);
-
+    var area_height = !title ? height : height - 10;
     var one_piece = false;
     var key_data = [];
     var data_total = 0;
@@ -622,6 +622,7 @@ if(!full_donut){
                                });
     svg.append(outer_circle);
 
+    var area_height = !title ? height : height - 10;
     var key_data = [];
     var data_points = data[0]['values'].length;
     var angle_step = 2 * PI / data_points;
