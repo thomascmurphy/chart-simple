@@ -395,6 +395,7 @@ if(!full_donut){
         has_key = options.has_key,
         offset_top = title ? 10 : 0,
         outer_radius = Math.min(center_x, center_y - offset_top),
+        pie_center_x = outer_radius + offset_top,
         cos = Math.cos,
         sin = Math.sin,
         PI = Math.PI,
@@ -405,7 +406,7 @@ if(!full_donut){
     var one_piece = false;
     var key_data = [];
     var data_total = 0;
-    var start_x = outer_radius;
+    var start_x = pie_center_x;
     var start_y = offset_top + outer_radius + outer_radius;
     var start_angle = PI * 3/2;
     for(var i=0; i<data.length; i++){
@@ -419,7 +420,7 @@ if(!full_donut){
       for(var i=0; i<data.length; i++){
         var data_item = data[i],
         arc_length = (data_item.value / data_total) * total_radians,
-        end_x_outer = outer_radius + outer_radius * (cos(start_angle - arc_length)),
+        end_x_outer = pie_center_x + outer_radius * (cos(start_angle - arc_length)),
         end_y_outer = offset_top + outer_radius - outer_radius * (sin(start_angle - arc_length)),
         color = colors[i%colors.length],
         arc_outer_sweep,
@@ -455,7 +456,7 @@ if(!full_donut){
 
               var piece_path = makeSVG('circle',
                                        {
-                                         cx: outer_radius,
+                                         cx: start_x,
                                          cy: outer_radius + offset_top,
                                          r: outer_radius,
                                          fill: color,
@@ -468,7 +469,7 @@ if(!full_donut){
 
               var piece_attrs = [
                 'M',
-                outer_radius,
+                pie_center_x,
                 outer_radius + offset_top,
                 'L',
                 start_x,
@@ -480,7 +481,7 @@ if(!full_donut){
                 end_x_outer,
                 end_y_outer,
                 'L',
-                outer_radius,
+                pie_center_x,
                 outer_radius + offset_top,
                 'Z'
               ];
